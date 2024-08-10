@@ -114,18 +114,48 @@ int main(void)
   MX_USART1_UART_Init();
   MX_FATFS_Init();
   /* USER CODE BEGIN 2 */
+
+  /* Mounting the SD CARD*/
   res = f_mount(&fs, "", 0);
   if(res != FR_OK)
 	  send_uart("error in mounting SD Card \n");
   else
 	  send_uart("SD Card mounted successfully \n");
+
+  /* Open file, write data and close it */
+  res = f_open(&file, "file10.txt", FA_OPEN_ALWAYS | FA_READ | FA_WRITE);
+  if(res != FR_OK)	send_uart("failed to open \n");
+  else	send_uart("file opened successfully \n");
+
+  res = f_puts("This data in the file that is caled file1 bla bla\n", &file);
+  if(res != FR_OK)	send_uart("failed to write the data \n");
+  else	send_uart("data written successfully \n");
+
+  res = f_close(&file);
+  if(res != FR_OK)	send_uart("failed to close the file \n");
+  else	send_uart("file closed successfully \n");
+
+  send_uart("File written and closed\n");
+
+  /* Open file, read data and close it*/
+  res = f_open(&file, "file10.txt", FA_READ);
+  if(res != FR_OK)	send_uart("failed to open \n");
+  else	send_uart("file opened successfully \n");
+
+  uint8_t l = strlen("This data in the file that is caled file1 bla bla\n");
+  f_gets(buffer, l, &file);
+  send_uart(buffer);
+
+  res = f_close(&file);
+  if(res != FR_OK)	send_uart("failed to close the file \n");
+  else	send_uart("file closed successfully \n");
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	send_uart("Hello World\n");
+	//send_uart("Hello World\n");
 	HAL_Delay(1000);
     /* USER CODE END WHILE */
 
